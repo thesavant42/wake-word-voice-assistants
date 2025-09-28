@@ -220,7 +220,7 @@ media_player:
 micro_wake_word:
   id: mww
   models:
-    - https://raw.githubusercontent.com/thesavant42/microWakeWord/refs/heads/main/models/heybitch.json
+    - https://raw.githubusercontent.com/wsieber/microwakewords/5d561dba91e43db52749e1388492859fba85828b/r2d2.json
     - hey_mycroft
     - hey_jarvis
   on_wake_word_detected:
