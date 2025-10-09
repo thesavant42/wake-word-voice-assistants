@@ -221,8 +221,8 @@ micro_wake_word:
   id: mww
   models:
     - https://raw.githubusercontent.com/wsieber/microwakewords/5d561dba91e43db52749e1388492859fba85828b/r2d2.json
-    - hey_mycroft
-    - hey_jarvis
+    - https://raw.githubusercontent.com/thesavant42/microWakeWord-Trainer-Nvidia-Docker/refs/heads/main/mww_savant42/master_yoda.json
+    - https://raw.githubusercontent.com/thesavant42/microWakeWord-Trainer-Nvidia-Docker/refs/heads/main/mww_savant42/yo_marvis.json
   on_wake_word_detected:
     - voice_assistant.start:
         wake_word: !lambda return wake_word;
