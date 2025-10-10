@@ -15,18 +15,18 @@ ota:
   - platform: http_request
     id: ota_http_request
 
-update:
-  - platform: http_request
-    id: update_http_request
-    name: Firmware
-    source: https://firmware.esphome.io/wake-word-voice-assistant/m5stack-atom-echo/manifest.json
+#update:
+#  - platform: http_request
+#    id: update_http_request
+#    name: Firmware
+#    source: https://firmware.esphome.io/wake-word-voice-assistant/m5stack-atom-echo/manifest.json
 
 http_request:
   timeout: 10s
   watchdog_timeout: 15s
 
 dashboard_import:
-  package_import_url: github://esphome/wake-word-voice-assistants/m5stack-atom-echo/m5stack-atom-echo.yaml@main
+  package_import_url: github://thesavant42/wake-word-voice-assistants/m5stack-atom-echo/m5stack-atom-echo.yaml@main
 
 improv_serial:
 
