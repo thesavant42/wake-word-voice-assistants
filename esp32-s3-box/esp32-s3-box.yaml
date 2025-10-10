@@ -1,21 +1,20 @@
 ---
 substitutions:
   name: esp32-s3-box
-  friendly_name: ESP32 S3 Box
-  loading_illustration_file: https://github.com/esphome/wake-word-voice-assistants/raw/main/casita/loading_320_240.png
-  idle_illustration_file: https://github.com/esphome/wake-word-voice-assistants/raw/main/casita/idle_320_240.png
-  listening_illustration_file: https://github.com/esphome/wake-word-voice-assistants/raw/main/casita/listening_320_240.png
-  thinking_illustration_file: https://github.com/esphome/wake-word-voice-assistants/raw/main/casita/thinking_320_240.png
-  replying_illustration_file: https://github.com/esphome/wake-word-voice-assistants/raw/main/casita/replying_320_240.png
-  error_illustration_file: https://github.com/esphome/wake-word-voice-assistants/raw/main/casita/error_320_240.png
-  timer_finished_illustration_file: https://github.com/esphome/wake-word-voice-assistants/raw/main/casita/timer_finished_320_240.png
+  friendly_name: boxs3
+  loading_illustration_file: https://raw.githubusercontent.com/thesavant42/wake-word-voice-assistants/refs/heads/main/stickerbox/loading_320_240.png
+  idle_illustration_file: https://raw.githubusercontent.com/thesavant42/wake-word-voice-assistants/refs/heads/main/stickerbox/idle_320_240.png
+  listening_illustration_file: https://raw.githubusercontent.com/thesavant42/wake-word-voice-assistants/refs/heads/main/stickerbox/listening_320_240.png
+  thinking_illustration_file: https://raw.githubusercontent.com/thesavant42/wake-word-voice-assistants/refs/heads/main/stickerbox/thinking_320_240.png
+  replying_illustration_file: https://raw.githubusercontent.com/thesavant42/wake-word-voice-assistants/refs/heads/main/stickerbox/replying_320_240.png
+  error_illustration_file: https://raw.githubusercontent.com/thesavant42/wake-word-voice-assistants/refs/heads/main/stickerbox/error_320_240.png
 
-  loading_illustration_background_color: "000000"
-  idle_illustration_background_color: "000000"
-  listening_illustration_background_color: "FFFFFF"
-  thinking_illustration_background_color: "FFFFFF"
-  replying_illustration_background_color: "FFFFFF"
-  error_illustration_background_color: "000000"
+  loading_illustration_background_color: '000000'
+  idle_illustration_background_color: '000000'
+  listening_illustration_background_color: '000000'
+  thinking_illustration_background_color: '000000'
+  replying_illustration_background_color: '000000'
+  error_illustration_background_color: '000000'
 
   voice_assist_idle_phase_id: "1"
   voice_assist_listening_phase_id: "2"
@@ -190,7 +189,10 @@ media_player:
             - microphone.is_capturing:
           then:
             - script.execute: stop_wake_word
-            # Ensure VA stops before moving on
+            # ALWAYS wait for VA to stop before proceeding, regardless of wake word engine  
+            - wait_until:  
+                - not:  
+                    voice_assistant.is_running:
             - if:
                 condition:
                   - lambda: return id(wake_word_engine_location).state == "In Home Assistant";
