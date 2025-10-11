@@ -19,16 +19,7 @@ ota:
   - platform: http_request
     id: ota_http_request
 
-#update:
-#  - platform: http_request
-#    id: update_http_request
-#    name: Firmware
-#    source: https://firmware.esphome.io/wake-word-voice-assistant/esp32-s3-box/manifest.json
-
 http_request:
-
-dashboard_import:
-  package_import_url: github://thesavant42/wake-word-voice-assistants/esp32-s3-box/esp32-s3-box.yaml@main
 
 wifi:
   on_connect:
