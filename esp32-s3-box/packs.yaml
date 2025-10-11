@@ -8,7 +8,7 @@ substitutions:
   thinking_illustration_file: https://raw.githubusercontent.com/thesavant42/wake-word-voice-assistants/refs/heads/main/stickerbox/thinking_320_240.png
   replying_illustration_file: https://raw.githubusercontent.com/thesavant42/wake-word-voice-assistants/refs/heads/main/stickerbox/replying_320_240.png
   error_illustration_file: https://raw.githubusercontent.com/thesavant42/wake-word-voice-assistants/refs/heads/main/stickerbox/error_320_240.png
-  timer_finished_illustration_file: https://raw.githubusercontent.com/thesavant42/wake-word-voice-assistants/refs/heads/main/stickerbox/timer_finished_320_240.png
+
   loading_illustration_background_color: '000000'
   idle_illustration_background_color: '000000'
   listening_illustration_background_color: '000000'
