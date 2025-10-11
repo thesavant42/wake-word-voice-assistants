@@ -158,8 +158,6 @@ microphone:
     bits_per_sample: 16bit
     adc_type: external
 
-
-
 # Hardware Speaker
 speaker:
   - platform: i2s_audio
@@ -172,7 +170,6 @@ speaker:
     audio_dac: es8311_dac
     buffer_duration: 100ms
     timeout: never
-
 
   # Virtual speakers to combine the announcement and media streams together into one output
   - platform: mixer
