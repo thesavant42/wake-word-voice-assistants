@@ -194,20 +194,22 @@ speaker:
     sample_rate: 48000
     bits_per_sample: 16
 
-
-
-
 media_player:
   - platform: speaker
-    name: speaker_media_player
+    name: media_player
     id: speaker_media_player
     volume_min: 0.5
     volume_max: 0.8
     announcement_pipeline:
-      speaker: box_speaker
+      speaker: announcement_resampling_speaker # Should be announcement_resampling_speaker
       format: WAV
       sample_rate: 48000
       num_channels: 1  # S3 Box only has one output channel
+    media_pipeline:
+      speaker: media_resampling_speaker
+      format: WAV     # FLAC is the least processor intensive codec
+      num_channels: 1
+      sample_rate: 48000
     files:
       - id: timer_finished_sound
         file: https://github.com/thesavant42/wake-word-voice-assistants/raw/refs/heads/main/sounds/Holocron.wav
@@ -300,7 +302,7 @@ voice_assistant:
             - not:
                 media_player.is_announcing:
             - not:
-                speaker.is_playing:
+                speaker.is_playing: box_speaker
     # Restart only mWW if enabled; streaming wake words automatically restart
     - if:
         condition:
