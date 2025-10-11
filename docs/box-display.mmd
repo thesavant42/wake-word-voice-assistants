@@ -1,0 +1,35 @@
+%% ---- Display & UI Logic ---- %%
+graph TD
+    subgraph "Hardware & Assets"
+        LCD[display: ili9xxx<br/>id: s3_box_lcd]
+        FONTS[Fonts]
+        IMAGES[Images]
+    end
+
+    subgraph "UI Logic"
+        DRAW[script: draw_display]
+        PAGES[Display Pages<br/>(idle, listening, etc.)]
+    end
+
+    subgraph "Event Triggers"
+        T_BOOT[on_boot]
+        T_VA[voice_assistant events]
+        T_WIFI[wifi/api events]
+    end
+
+    %% --- Connections --- %%
+    T_BOOT & T_VA & T_WIFI -->|"Call"| DRAW
+    DRAW -->|"Shows"| PAGES
+    PAGES -->|"Renders on"| LCD
+    FONTS & IMAGES -->|"Used by"| PAGES
+
+    class LCD hardware
+    class FONTS,IMAGES,PAGES,DRAW component
+    class T_BOOT,T_VA,T_WIFI trigger
+
+    %% --- Styling --- %%
+    classDef component fill:#cde,stroke:#333,stroke-width:2px,color:#000
+    classDef hardware fill:#f96,stroke:#333,stroke-width:2px,color:#000
+    classDef logic fill:#cfc,stroke:#333,stroke-width:2px,color:#000
+    classDef trigger fill:#fdf,stroke:#333,stroke-width:2px,color:#000
+    classDef io fill:#fec,stroke:#333,stroke-width:2px,color:#000

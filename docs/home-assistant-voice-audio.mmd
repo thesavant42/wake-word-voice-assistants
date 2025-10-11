@@ -1,0 +1,54 @@
+%% ---- Audio Pipeline ---- %%
+graph TD
+    subgraph "Input Microphone"
+        ADC[External ADC]
+        MIC[i2s_audio mic<br/>id: i2s_mics]
+    end
+
+    subgraph "Output Speaker Pipeline"
+        MEDIA[media_player<br/>id: external_media_player]
+        ARS[resampler<br/>id: announcement_resampling_speaker]
+        MRS[resampler<br/>id: media_resampling_speaker<br/>media_mixing_input]
+        MIX[mixer<br/>id: mixing_speaker]
+        SPK_HW[i2s_audio speaker<br/>id: i2s_audio_speaker]
+    end
+
+    subgraph "Central Logic"
+        VA(voice_assistant<br/>id: va)
+    end
+
+    subgraph "Ducking Logic"
+        DUCK_START[VA on_start<br/>Apply 20dB reduction<br/>duration: 0.0s]
+        DUCK_ANNOUNCE[Media on_announcement<br/>Apply 20dB reduction<br/>duration: 0.0s]
+        DUCK_END[VA on_end<br/>Remove reduction<br/>duration: 1.0s]
+        DUCK_STATE[Media on_state<br/>Conditional unduck<br/>if not announcing & not VA running]
+    end
+
+    %% --- Connections --- %%
+    ADC -->|"16kHz/16bit"| MIC
+    MIC -->|"Audio Stream"| VA
+    MEDIA --"Announcement Pipeline"--> ARS
+    MEDIA --"Media Pipeline"--> MRS
+    ARS & MRS -->|"Resampled to 48kHz"| MIX
+    MIX -->|"Combined Stream"| SPK_HW
+    VA -->|"Plays audio via"| MEDIA
+    VA -->|"on_start"| DUCK_START
+    MEDIA -->|"on_announcement"| DUCK_ANNOUNCE
+    VA -->|"on_end"| DUCK_END
+    MEDIA -->|"on_state"| DUCK_STATE
+    DUCK_START -->|"Duck Media Input"| MRS
+    DUCK_ANNOUNCE -->|"Duck Media Input"| MRS
+    DUCK_END -->|"Unduck Media Input"| MRS
+    DUCK_STATE -->|"Unduck Media Input"| MRS
+
+    class ADC,MIC,SPK_HW hardware
+    class MEDIA,ARS,MRS,MIX component
+    class VA logic
+    class DUCK_START,DUCK_ANNOUNCE,DUCK_END,DUCK_STATE trigger
+
+    %% --- Styling --- %%
+    classDef component fill:#cde,stroke:#333,stroke-width:2px,color:#000
+    classDef hardware fill:#f96,stroke:#333,stroke-width:2px,color:#000
+    classDef logic fill:#cfc,stroke:#333,stroke-width:2px,color:#000
+    classDef trigger fill:#fdf,stroke:#333,stroke-width:2px,color:#000
+    classDef io fill:#fec,stroke:#333,stroke-width:2px,color:#000

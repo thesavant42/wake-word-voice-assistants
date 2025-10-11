@@ -1,0 +1,44 @@
+%% ---- Voice Assistant Logic ---- %%
+graph TD
+    subgraph "Inputs"
+        MIC[mic: mic]
+        MWW[micro_wake_word]
+    end
+
+    subgraph "Core Logic"
+        VA(voice_assistant)
+    end
+
+    subgraph "Outputs"
+        MP[media_player]
+    end
+
+    subgraph "Triggers & Actions"
+        T_LISTEN[on_listening]
+        T_STT_END[on_stt_end]
+        T_TTS_START[on_tts_start]
+        T_END[on_end]
+        T_ERR[on_error]
+        S_DRAW[script: draw_display]
+        S_WAKE[script: start/stop_wake_word]
+    end
+
+    %% --- Connections --- %%
+    MWW --"Wake Word Detected"--> VA
+    MIC -->|"Audio Stream"| VA
+    VA -->|"Plays TTS/Media"| MP
+    VA --> T_LISTEN & T_STT_END & T_TTS_START & T_END & T_ERR
+    T_LISTEN & T_STT_END & T_TTS_START & T_ERR -->|"Calls"| S_DRAW
+    T_END -->|"Calls"| S_WAKE
+
+    class VA logic
+    class MIC,MWW,MP io
+    class T_LISTEN,T_STT_END,T_TTS_START,T_END,T_ERR trigger
+    class S_DRAW,S_WAKE component
+
+    %% --- Styling --- %%
+    classDef component fill:#cde,stroke:#333,stroke-width:2px,color:#000
+    classDef hardware fill:#f96,stroke:#333,stroke-width:2px,color:#000
+    classDef logic fill:#cfc,stroke:#333,stroke-width:2px,color:#000
+    classDef trigger fill:#fdf,stroke:#333,stroke-width:2px,color:#000
+    classDef io fill:#fec,stroke:#333,stroke-width:2px,color:#000

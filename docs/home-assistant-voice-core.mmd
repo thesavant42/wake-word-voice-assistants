@@ -1,0 +1,24 @@
+%% ---- Core System & Hardware ---- %%
+graph TD
+    subgraph "Core System"
+        A["`**esp32**`"]
+    end
+
+    subgraph "Connectivity"
+    end
+
+    subgraph "Hardware I/O"
+    end
+
+    A --> WIFI & API & OTA & LOG
+
+    class A hardware
+    class WIFI,API,OTA,LOG component
+    class I2C,SPI io
+
+    %% --- Styling --- %%
+    classDef component fill:#cde,stroke:#333,stroke-width:2px,color:#000
+    classDef hardware fill:#f96,stroke:#333,stroke-width:2px,color:#000
+    classDef logic fill:#cfc,stroke:#333,stroke-width:2px,color:#000
+    classDef trigger fill:#fdf,stroke:#333,stroke-width:2px,color:#000
+    classDef io fill:#fec,stroke:#333,stroke-width:2px,color:#000

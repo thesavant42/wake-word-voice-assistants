@@ -1,0 +1,38 @@
+%% ---- Audio Pipeline ---- %%
+graph TD
+    subgraph "Input Microphone"
+        ADC[External ADC]
+        MIC[i2s_audio mic<br/>id: mic]
+    end
+
+    subgraph "Output Speaker Pipeline"
+        MEDIA[media_player<br/>id: media_player]
+        ARS[resampler<br/>id: announcement_resampling_speaker]
+        MRS[resampler<br/>id: media_resampling_speaker<br/>media_mixing_input]
+        MIX[mixer<br/>id: mixing_speaker]
+        SPK_HW[i2s_audio speaker<br/>id: speaker]
+    end
+
+    subgraph "Central Logic"
+        VA(voice_assistant<br/>id: voice_assistant)
+    end
+
+    %% --- Connections --- %%
+    ADC -->|"16kHz/16bit"| MIC
+    MIC -->|"Audio Stream"| VA
+    MEDIA --"Announcement Pipeline"--> ARS
+    MEDIA --"Media Pipeline"--> MRS
+    ARS & MRS -->|"Resampled to 48kHz"| MIX
+    MIX -->|"Combined Stream"| SPK_HW
+    VA -->|"Plays audio via"| MEDIA
+
+    class ADC,MIC,SPK_HW hardware
+    class MEDIA,ARS,MRS,MIX component
+    class VA logic
+
+    %% --- Styling --- %%
+    classDef component fill:#cde,stroke:#333,stroke-width:2px,color:#000
+    classDef hardware fill:#f96,stroke:#333,stroke-width:2px,color:#000
+    classDef logic fill:#cfc,stroke:#333,stroke-width:2px,color:#000
+    classDef trigger fill:#fdf,stroke:#333,stroke-width:2px,color:#000
+    classDef io fill:#fec,stroke:#333,stroke-width:2px,color:#000

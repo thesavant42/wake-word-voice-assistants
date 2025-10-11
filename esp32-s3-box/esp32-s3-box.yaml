@@ -231,6 +231,10 @@ media_player:
                   - wait_until:
                       - not:
                           voice_assistant.is_running:
+      - mixer_speaker.apply_ducking:
+          id: media_mixing_input
+          decibel_reduction: 20
+          duration: 0.0s
       # Since VA isn't running, this is user-intiated media playback. Draw the mute display
       - if:
           condition:
@@ -249,6 +253,20 @@ media_player:
             - script.execute: start_wake_word
             - script.execute: set_idle_or_mute_phase
             - script.execute: draw_display
+    on_state:
+      - if:
+          condition:
+            and:
+              - switch.is_off: timer_ringing
+              - not:
+                  voice_assistant.is_running:
+              - not:
+                  media_player.is_announcing:
+          then:
+            - mixer_speaker.apply_ducking:
+                id: media_mixing_input
+                decibel_reduction: 0
+                duration: 1.0s
 
 micro_wake_word:
   id: mww
@@ -267,6 +285,11 @@ voice_assistant:
   noise_suppression_level: 2
   auto_gain: 31dBFS
   volume_multiplier: 2.0
+  on_start:
+    - mixer_speaker.apply_ducking:
+        id: media_mixing_input
+        decibel_reduction: 20
+        duration: 0.0s
   on_listening:
     - lambda: id(voice_assistant_phase) = ${voice_assist_listening_phase_id};
     - text_sensor.template.publish:
@@ -310,6 +333,10 @@ voice_assistant:
         then:
           - lambda: id(va).set_use_wake_word(false);
           - micro_wake_word.start:
+    - mixer_speaker.apply_ducking:
+        id: media_mixing_input
+        decibel_reduction: 0
+        duration: 1.0s
     - script.execute: set_idle_or_mute_phase
     - script.execute: draw_display
     # Clear text sensors
