@@ -166,7 +166,7 @@ speaker:
     dac_type: external
     sample_rate: 48000
     bits_per_sample: 16bit
-    channel: left
+    channel: mono
     audio_dac: es8311_dac
     buffer_duration: 100ms
     timeout: never
