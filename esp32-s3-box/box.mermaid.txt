@@ -1,0 +1,162 @@
+%% ---- Core System & Hardware ---- %%
+graph TD
+    subgraph "Core System"
+        A["`**esp32s3box**`"]
+    end
+
+    subgraph "Connectivity"
+        WIFI[WiFi]
+        API[API Server]
+        OTA[OTA Updates]
+        LOG[Logger]
+    end
+
+    subgraph "Hardware I/O"
+        I2C(I2C<br/>SCL: GPIO18<br/>SDA: GPIO8)
+        SPI(SPI<br/>CLK: 7<br/>MOSI: 6)
+        BS_left_top_button[Button<br/>left_top_button<br/>Pin: GPIO0]
+    end
+
+    A --> WIFI & API & OTA & LOG
+    A --> I2C & SPI & BS_left_top_button
+
+    class A hardware
+    class WIFI,API,OTA,LOG component
+    class I2C,SPI,BS_left_top_button io
+
+    %% --- Styling --- %%
+    classDef component fill:#cde,stroke:#333,stroke-width:2px,color:#000
+    classDef hardware fill:#f96,stroke:#333,stroke-width:2px,color:#000
+    classDef logic fill:#cfc,stroke:#333,stroke-width:2px,color:#000
+    classDef trigger fill:#fdf,stroke:#333,stroke-width:2px,color:#000
+    classDef io fill:#fec,stroke:#333,stroke-width:2px,color:#000
+
+
+================================================================================
+
+%% ---- Audio Pipeline ---- %%
+graph TD
+    subgraph "Input (Microphone)"
+        ADC[es7210 ADC]
+        MIC[i2s_audio mic<br/>id: box_mic]
+    end
+
+    subgraph "Output (Speaker Pipeline)"
+        MEDIA[media_player]
+        ARS[resampler<br/>id: announcement_resampling_speaker]
+        MRS[resampler<br/>id: media_resampling_speaker]
+        MIX[mixer<br/>id: mixing_speaker]
+        SPK_HW[i2s_audio speaker<br/>id: box_speaker]
+    end
+
+    subgraph "Central Logic"
+        VA(voice_assistant)
+    end
+
+    %% --- Connections --- %%
+    ADC -->|"16kHz/16bit"| MIC
+    MIC -->|"To Voice Assistant"| VA
+    MEDIA --"Announcement Pipeline"--> ARS
+    MEDIA --"Media Pipeline"--> MRS
+    ARS & MRS -->|"Resampled to 48kHz"| MIX
+    MIX -->|"Combined Stream"| SPK_HW
+    VA -->|"Plays audio via"| MEDIA
+
+    class ADC,MIC,SPK_HW hardware
+    class MEDIA,ARS,MRS,MIX component
+    class VA logic
+
+    %% --- Styling --- %%
+    classDef component fill:#cde,stroke:#333,stroke-width:2px,color:#000
+    classDef hardware fill:#f96,stroke:#333,stroke-width:2px,color:#000
+    classDef logic fill:#cfc,stroke:#333,stroke-width:2px,color:#000
+    classDef trigger fill:#fdf,stroke:#333,stroke-width:2px,color:#000
+    classDef io fill:#fec,stroke:#333,stroke-width:2px,color:#000
+
+
+================================================================================
+
+%% ---- Voice Assistant Logic ---- %%
+graph TD
+    subgraph "Inputs"
+        MIC[mic: box_mic]
+        MWW[micro_wake_word]
+    end
+
+    subgraph "Core Logic"
+        VA(voice_assistant)
+    end
+
+    subgraph "Outputs"
+        MP[media_player]
+    end
+
+    subgraph "Triggers & Actions"
+        T_LISTEN[on_listening]
+        T_STT_END[on_stt_end]
+        T_TTS_START[on_tts_start]
+        T_END[on_end]
+        T_ERR[on_error]
+        S_DRAW[script: draw_display]
+        S_WAKE[script: start/stop_wake_word]
+    end
+
+    %% --- Connections --- %%
+    MWW --"Wake Word Detected"--> VA
+    MIC -->|"Audio Stream"| VA
+    VA -->|"Plays TTS/Media"| MP
+    VA --> T_LISTEN & T_STT_END & T_TTS_START & T_END & T_ERR
+    T_LISTEN & T_STT_END & T_TTS_START & T_ERR -->|"Calls"| S_DRAW
+    T_END -->|"Calls"| S_WAKE
+
+    class VA logic
+    class MIC,MWW,MP io
+    class T_LISTEN,T_STT_END,T_TTS_START,T_END,T_ERR trigger
+    class S_DRAW,S_WAKE component
+
+    %% --- Styling --- %%
+    classDef component fill:#cde,stroke:#333,stroke-width:2px,color:#000
+    classDef hardware fill:#f96,stroke:#333,stroke-width:2px,color:#000
+    classDef logic fill:#cfc,stroke:#333,stroke-width:2px,color:#000
+    classDef trigger fill:#fdf,stroke:#333,stroke-width:2px,color:#000
+    classDef io fill:#fec,stroke:#333,stroke-width:2px,color:#000
+
+
+================================================================================
+
+%% ---- Display & UI Logic ---- %%
+graph TD
+    subgraph "Hardware & Assets"
+        LCD[display: ili9xxx<br/>id: s3_box_lcd]
+        FONTS[Fonts]
+        IMAGES[Images]
+    end
+
+    subgraph "UI Logic"
+        DRAW[script: draw_display]
+        PAGES[Display Pages<br/>(idle, listening, etc.)]
+    end
+
+    subgraph "Event Triggers"
+        T_BOOT[on_boot]
+        T_VA[voice_assistant events]
+        T_WIFI[wifi/api events]
+    end
+
+    %% --- Connections --- %%
+    T_BOOT & T_VA & T_WIFI -->|"Call"| DRAW
+    DRAW -->|"Shows"| PAGES
+    PAGES -->|"Renders on"| LCD
+    FONTS & IMAGES -->|"Used by"| PAGES
+
+    class LCD hardware
+    class FONTS,IMAGES,PAGES,DRAW component
+    class T_BOOT,T_VA,T_WIFI trigger
+
+    %% --- Styling --- %%
+    classDef component fill:#cde,stroke:#333,stroke-width:2px,color:#000
+    classDef hardware fill:#f96,stroke:#333,stroke-width:2px,color:#000
+    classDef logic fill:#cfc,stroke:#333,stroke-width:2px,color:#000
+    classDef trigger fill:#fdf,stroke:#333,stroke-width:2px,color:#000
+    classDef io fill:#fec,stroke:#333,stroke-width:2px,color:#000
+
