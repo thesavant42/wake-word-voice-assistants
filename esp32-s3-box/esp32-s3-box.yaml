@@ -1,4 +1,5 @@
 ---
+
 substitutions:
   name: esp32-s3-box
   friendly_name: boxs3
@@ -278,7 +279,14 @@ voice_assistant:
           - lambda: return id(wake_word_engine_location).state == "On device";
         then:
           - lambda: id(va).set_use_wake_word(false);
+          - esphome.logger.log:
+              message: "Starting micro_wake_word engine..."
           - micro_wake_word.start:
+          - esphome.logger.log:
+              message: "micro_wake_word engine started successfully."
+    
+    
+    
     - script.execute: set_idle_or_mute_phase
     - script.execute: draw_display
     # Clear text sensors
